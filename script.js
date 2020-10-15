@@ -33,25 +33,26 @@ Promise.all([getDate, getUser])
 		fetch(url)
 			.then(response => response.json())
 			.then(json => {
+				const {avatar_url, name, company, html_url} = json;
 				let avatarUser = document.createElement('img');
 				avatarUser.className = 'img';
-				avatarUser.src = json.avatar_url;
+				avatarUser.src = avatar_url;
 				wrap.appendChild(avatarUser);
 
 				let nameUser = document.createElement('h2');
 				nameUser.className = 'name';
-				nameUser.innerHTML = json.name;
+				nameUser.innerHTML = name;
 				wrap.prepend(nameUser);
 
 				let discUser = document.createElement('p');
 				discUser.className = 'disc-user';
-				discUser.innerHTML = json.company;
+				discUser.innerHTML = company;
 				wrap.appendChild(discUser);
 
 				let linkUser = document.createElement('a');
 				linkUser.className = 'link';
-				linkUser.innerHTML = json.html_url;
-				linkUser.href = json.html_url;
+				linkUser.innerHTML = html_url;
+				linkUser.href = html_url;
 				wrap.appendChild(linkUser);
 			})
 			.catch(function(error) {
