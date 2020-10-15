@@ -5,31 +5,58 @@
 	// .then(json => console.log(json.name));
 	// .then(json => console.log(json.company));
 	// .then(json => console.log(json.html_url));
-	
-fetch('https://api.github.com/users/AnnaSiawa')
-	.then(response => response.json())
-	.then(json => {
-		let avatarUser = document.createElement('img');
-		avatarUser.className = 'img';
-		avatarUser.src = json.avatar_url;
-		document.body.append(avatarUser);
 
-		let nameUser = document.createElement('h2');
-		nameUser.className = 'name';
-		nameUser.innerHTML = json.name;
-		document.body.prepend(nameUser);
+setTimeout(() => {
+	let preloader = document.getElementById('cube-loader');
+	let wrap = document.getElementById('wrap');
+	preloader.classList.add('hidden');
+}, 3000);
 
-		let discUser = document.createElement('p');
-		discUser.className = 'disc';
-		discUser.innerHTML = json.company;
-		document.body.append(discUser);
+let url = 'https://api.github.com/users/AnnaSiawa';
+let currentDate = new Date().toLocaleDateString();
 
-		let linkUser = document.createElement('a');
-		linkUser.className = 'link';
-		linkUser.innerHTML = json.html_url;
-		linkUser.href = json.html_url;
-		document.body.append(linkUser);
-	})
-	.catch(function(error) {
-		document.body.innerHTML = `Информация о пользователе недоступна.<br> ${error}`;
-	})
+let getDate = new Promise((resolve, reject) => {
+	setTimeout(() => currentDate ? resolve(currentDate) : reject('Значение не найдено'), 3000);
+});
+let getUser = new Promise((resolve, reject) => {
+	setTimeout(() => url ? resolve(url) : reject('Данные не найдены'), 3000);
+});
+
+Promise.all([getDate, getUser])
+	.then(([currentDate, url]) => {
+		let wrap = document.getElementById('wrap');
+		let newDate = document.createElement('div');
+		newDate.className = 'disc-date';
+		newDate.innerHTML = currentDate;
+		wrap.prepend(newDate);
+
+		fetch(url)
+			.then(response => response.json())
+			.then(json => {
+				const {avatar_url, name, company, html_url} = json;
+				let avatarUser = document.createElement('img');
+				avatarUser.className = 'img';
+				avatarUser.src = avatar_url;
+				wrap.appendChild(avatarUser);
+
+				let nameUser = document.createElement('h2');
+				nameUser.className = 'name';
+				nameUser.innerHTML = name;
+				wrap.prepend(nameUser);
+
+				let discUser = document.createElement('p');
+				discUser.className = 'disc-user';
+				discUser.innerHTML = company;
+				wrap.appendChild(discUser);
+
+				let linkUser = document.createElement('a');
+				linkUser.className = 'link';
+				linkUser.innerHTML = html_url;
+				linkUser.href = html_url;
+				wrap.appendChild(linkUser);
+			})
+			.catch(function(error) {
+				document.body.innerHTML = `Информация о пользователе недоступна.<br> ${error}`;
+			});
+	});
+
